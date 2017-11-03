@@ -55,13 +55,13 @@ def number_of_calls():
             count_func[i]=1
     return count_func
 # tutaj moge zobaczyc czy wchodzi do rekurencji
-#trace_all(os.path.join("examples","main.py"))
-trace_all(os.path.join("examples","operator_call_clean.py"))
+#trace_all(os.path.join("examples_to_mutation","main.py"))
+trace_all(os.path.join("examples_to_mutation","operator_call_clean.py"))
 print(statements_flow)
 print(number_of_calls())
 statements_flow.clear()
 print('--------------------------')
-trace_all(os.path.join("examples","operator_call_mut_code.py"))
+trace_all(os.path.join("examples_to_mutation","operator_call_mut_code.py"))
 print(statements_flow)
 print(number_of_calls())
 

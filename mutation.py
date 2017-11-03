@@ -6,9 +6,11 @@ import time
 
 compare_operator = [">","<","==","!=","<=",">="]
 arithmetic_operator = ["*","/","-","+","%","**","+=","-="]
+
 def open_file(path):
     with open(path,"r") as file:
         content = file.readlines()
+    file.close()
     return content
 
 def mut_compare_operator(content):

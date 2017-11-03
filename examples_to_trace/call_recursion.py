@@ -1,6 +1,8 @@
 import numpy
 
-from examples import recursion_example
+from examples_to_trace import recursion_example
+
+
 def call_recursion(a,b):
     if a>b:
     	recursion_example.foo(b)
