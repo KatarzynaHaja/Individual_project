@@ -13,9 +13,9 @@ def get_name_of_files(file):
     datas = data.measured_files()
     cov.stop()
     for i in datas:
-        files.append(i.split("/")[-1])
-        statements_flow["Files"].append(i.split("/")[-1])
-    #print(files)
+        files.append(re.sub('\\\\',"/",i).split("/")[-1])
+        statements_flow["Files"].append(re.sub('\\\\',"/",i).split("/")[-1])
+    print(files)
 
 def trace_lines(frame, event, arg):
     if event != 'line':
@@ -34,7 +34,7 @@ def trace_calls(frame, event, arg):
     func_name = co.co_name
     line_no = frame.f_lineno
     filename =co.co_filename
-    if filename.split("/")[-1] not in files or func_name == "<module>":
+    if re.sub('\\\\',"/",filename).split("/")[-1] not in files or func_name == "<module>":
         return
     statements_flow["Number of line"].append(line_no) 
     statements_flow["Name of function"].append(func_name)
@@ -54,16 +54,38 @@ def number_of_calls():
         else:
             count_func[i]=1
     return count_func
+
+def compare_paths(orgin,mut):
+    the_same = list()
+    len_path = min(len(orgin),len(mut))
+    for i in range(len_path):
+        if orgin[i] == mut[i]:
+            the_same.append(orgin[i])
+    return the_same
+
 # tutaj moge zobaczyc czy wchodzi do rekurencji
 #trace_all(os.path.join("examples_to_mutation","main.py"))
-trace_all(os.path.join("examples_to_mutation","operator_call_clean.py"))
-print(statements_flow)
-print(number_of_calls())
+# trace_all(os.path.join("examples_to_mutation","operator_call_clean.py"))
+# print(statements_flow)
+# print(number_of_calls())
+# statements_flow.clear()
+# print('--------------------------')
+# trace_all(os.path.join("examples_to_mutation","operator_call_mut_code.py"))
+# print(statements_flow)
+# print(number_of_calls())
+tracer_list = list()
 statements_flow.clear()
-print('--------------------------')
-trace_all(os.path.join("examples_to_mutation","operator_call_mut_code.py"))
+trace_all(os.path.join("examples_to_mutation","flow_operator_example.py"))
 print(statements_flow)
+tracer_list.append(statements_flow['Number of line'])
 print(number_of_calls())
 
+statements_flow.clear()
+trace_all(os.path.join("flow_operator_example","1509825380_flow_operator_example.py"))
+print(statements_flow)
+tracer_list.append(statements_flow['Number of line'])
+print(number_of_calls())
+print(tracer_list)
+print(compare_paths(tracer_list[0],tracer_list[1]))
 
 
