@@ -50,11 +50,33 @@ def mut_change_flow_operator(content):
         for opt in flow_operator:
             if opt in line:
                 finded_operator = opt
-                changed_operator =  modyfy_constant_element(flow_operator,finded_operator)
+                changed_operator =  modyfy_flow_element(flow_operator,finded_operator)
                 line = re.sub(finded_operator,changed_operator,line)
                 number_of_lines.append(index)
                 break
         new_content.append(line)
+    return (new_content,number_of_lines)
+
+def mut_constant_variable(content):
+    new_content = list()
+    number_of_lines = list()
+    for index, line in enumerate(content):
+            if re.match(".*True.*",line):
+                line = re.sub("True","False",line)
+                number_of_lines.append(index)
+            elif re.match(".*False.*",line):
+                line = re.sub("False", "True", line)
+                number_of_lines.append(index)
+            if  re.match(".*=\s*\d+",line) or re.match(".*return\s+\d+",line):
+                line = re.sub("\d+",str(random.random()*10),line)
+                number_of_lines.append(index)
+            if re.match(".*=\s*'",line) or re.match(".*return\s+'",line) or re.match('.*return\s+"',line) or re.match('.*=\s*"',line):
+                line = re.sub("'.*'", "'mut'", line)
+                line = re.sub('".*"', '"mut"', line)
+                number_of_lines.append(index)
+            new_content.append(line)
+
+    print(new_content)
     return (new_content,number_of_lines)
 
 
@@ -65,7 +87,7 @@ def modyfy_operators(operators,char):
     set_operators.remove(char)
     return random.choice(set_operators)
 
-def modyfy_constant_element(operators,char):
+def modyfy_flow_element(operators,char):
     print(operators)
     set_operators = copy.copy(operators)
     set_operators.append("")
@@ -93,7 +115,7 @@ def save_mut_code(content,folder,filename):
 
 "-----------------------------------------------------"
 
-# #Arithemtic operator mutation
+#Arithemtic operator mutation
 # folder = "arithmetic_operator_example"
 # filename = "arithmetic_operator_example.py"
 # path = os.path.join("examples_to_mutation","arithmetic_operator_example.py")
@@ -104,11 +126,20 @@ def save_mut_code(content,folder,filename):
 
 "------------------------------------------------------------"
 #Flow operator mutation
-folder = "flow_operator_example"
-filename = "flow_operator_example.py"
-path = os.path.join("examples_to_mutation","flow_operator_example.py")
+# folder = "flow_operator_example"
+# filename = "flow_operator_example.py"
+# path = os.path.join("examples_to_mutation","flow_operator_example.py")
+# content = open_file(path)
+# new_code,numbers_of_line = mut_change_flow_operator(content)
+# save_mut_code(new_code,folder,filename)
+# print(numbers_of_line)
+
+#Constant mutation
+folder = "constant_variable_example"
+filename = "constant_variable_example.py"
+path = os.path.join("examples_to_mutation","constant_variable_example.py")
 content = open_file(path)
-new_code,numbers_of_line = mut_change_flow_operator(content)
+new_code,numbers_of_line = mut_constant_variable(content)
 save_mut_code(new_code,folder,filename)
 print(numbers_of_line)
 
