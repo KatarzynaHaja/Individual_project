@@ -2,11 +2,12 @@ import sys
 import re
 from coverage import Coverage
 from collections import defaultdict
+from test_package import tests
 import os
 
 
 class Track:
-    def __init__(self,file):
+    def __init__(self,file, if_unittest=True):
         self.track_file = file
         self.files = list()
         self.statements_flow = defaultdict(list)
@@ -15,6 +16,7 @@ class Track:
         cov = Coverage()
         cov.start()
         exec(compile(open(self.track_file, "rb").read(), self.track_file, 'exec'))
+        #exec(compile("python -m pytest " + self.track_file),self.track_file,'exec')
         data = cov.get_data()
         datas = data.measured_files()
         cov.stop()
@@ -70,41 +72,47 @@ class Track:
 
 # tutaj moge zobaczyc czy wchodzi do rekurencji
 #trace_all(os.path.join("examples_to_mutation","main.py"))
-print("Orgin file")
-t = Track(os.path.join("examples_to_mutation","operator_call_clean.py"))
+# print("Orgin file")
+# t = Track(os.path.join("examples_to_mutation","operator_call_clean.py"))
+# t.trace_file()
+# print(t.statements_flow)
+# print(t.number_of_calls())
+# lines_clean = t.statements_flow["Number of line"]
+#
+# print("Mut file")
+# t = Track(os.path.join("examples_to_mutation","operator_call_mut_code.py"))
+# t.trace_file()
+# print(t.statements_flow)
+# lines_mut = t.statements_flow["Number of line"]
+# print(t.number_of_calls())
+#
+# print("Compare lines")
+# print(t.compare_paths(lines_clean,lines_mut))
+#
+# print('--------------------------')
+#
+# print("Orgin file")
+# t = Track(os.path.join("examples_to_mutation","flow_operator_example.py"))
+# t.trace_file()
+# print(t.statements_flow)
+# print(t.number_of_calls())
+# lines_clean = t.statements_flow["Number of line"]
+#
+# print("Mut file")
+# t = Track(os.path.join("flow_operator_example","1509825380_flow_operator_example.py"))
+# t.trace_file()
+# print(t.statements_flow)
+# print(t.number_of_calls())
+# lines_mut = t.statements_flow["Number of line"]
+#
+# print("compare lines")
+# print(t.compare_paths(lines_clean,lines_mut))
+
+print("Unittest")
+t = Track("tests.py")
 t.trace_file()
 print(t.statements_flow)
 print(t.number_of_calls())
-lines_clean = t.statements_flow["Number of line"]
-
-print("Mut file")
-t = Track(os.path.join("examples_to_mutation","operator_call_mut_code.py"))
-t.trace_file()
-print(t.statements_flow)
 lines_mut = t.statements_flow["Number of line"]
-print(t.number_of_calls())
-
-print("Compare lines")
-print(t.compare_paths(lines_clean,lines_mut))
-
-print('--------------------------')
-
-print("Orgin file")
-t = Track(os.path.join("examples_to_mutation","flow_operator_example.py"))
-t.trace_file()
-print(t.statements_flow)
-print(t.number_of_calls())
-lines_clean = t.statements_flow["Number of line"]
-
-print("Mut file")
-t = Track(os.path.join("flow_operator_example","1509825380_flow_operator_example.py"))
-t.trace_file()
-print(t.statements_flow)
-print(t.number_of_calls())
-lines_mut = t.statements_flow["Number of line"]
-
-print("compare lines")
-print(t.compare_paths(lines_clean,lines_mut))
-
 
 
