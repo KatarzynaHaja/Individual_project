@@ -1,28 +1,31 @@
 import unittest
-from test_package import tests  #problem z tym importem !!!!!!
+#from test_package import tests  #problem z tym importem !!!!!!
 from inspect import isclass
+#import test_package.tests
+import importlib
 import sys
-import importlib.util
-import imp
-import os
-import test_package
-
+import inspect
+import re
 
 class Get_result_of_tests:
     def __init__(self, filename,package):
-
+        self.module = package+'.'+filename
+        self.mod = importlib.import_module(self.module)
         self.filename = filename
         self.package = package
-        self.classes = [x for x in dir(self.filename) if isclass(getattr(self.filename, x))]
-        print(self.classes)
+        self.classes = list()
+        for name, obj in inspect.getmembers(sys.modules[self.module]):
+            if inspect.isclass(obj):
+               self.classes.append(name)
 
 
     def get_result(self):
         loader = unittest.TestLoader()
         suite_list = list()
         for i in range(len(self.classes)):
+            mod = getattr(self.mod,self.classes[i])
             suite = unittest.TestSuite((
-                loader.loadTestsFromTestCase(self.filename +'.'+self.classes[i])
+                loader.loadTestsFromTestCase(mod)
             ))
             suite_list.append(suite)
 
