@@ -2,25 +2,33 @@ import sys
 import re
 from coverage import Coverage
 from collections import defaultdict
-from test_package import tests
 import os
-
+# import importlib
+# import inspect
 
 class Track:
-    def __init__(self,file, if_unittest=True):
+    def __init__(self, file,package = None):
         self.track_file = file
+        self.package = package
         self.files = list()
+        #self.module = package + "." + file
+        #self.mod = importlib.import_module(self.module)
+
         self.statements_flow = defaultdict(list)
 
     def get_name_of_files(self):
         cov = Coverage()
         cov.start()
-        exec(compile(open(self.track_file, "rb").read(), self.track_file, 'exec'))
-        #exec(compile("python -m pytest " + self.track_file),self.track_file,'exec')
+        exec(compile(open("kk/t.py", "rb").read(), "kk/t.py", 'exec'))
+        # #exec("python -m unittest discover")
+        # suite = unittest.TestLoader().loadTestsFromModule(sys.modules[self.module])
+        # unittest.TextTestRunner(verbosity=2).run(suite)
         data = cov.get_data()
         datas = data.measured_files()
+        print("ddd",datas)
         cov.stop()
         for i in datas:
+            print(i)
             self.files.append(re.sub('\\\\',"/",i).split("/")[-1])
             self.statements_flow["Files"].append(re.sub('\\\\',"/",i).split("/")[-1])
 
@@ -45,13 +53,14 @@ class Track:
             return
         self.statements_flow["Number of line"].append(line_no)
         self.statements_flow["Name of function"].append(func_name)
-        #print (' %s line %s ' % (line_no,func_name))
+        print (' %s line %s ' % (line_no, filename))
         return self.trace_lines
 
     def trace_file(self):
         self.get_name_of_files()
         sys.settrace(self.trace_calls)
         exec(compile(open(self.track_file, "rb").read(), self.track_file, 'exec'))
+
 
     def number_of_calls(self):
         count_func = dict()
@@ -108,8 +117,8 @@ class Track:
 # print("compare lines")
 # print(t.compare_paths(lines_clean,lines_mut))
 
-print("Unittest")
-t = Track("tests.py")
+
+t = Track(os.path.join("kk","t.py"))
 t.trace_file()
 print(t.statements_flow)
 print(t.number_of_calls())
