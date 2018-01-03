@@ -7,12 +7,28 @@ import time
 compare_operator = [">","<","==","!=","<=",">="]
 arithmetic_operator = ["*","/","-","+","%","**","+=","-="]
 flow_operator = ['break','continue']
+all_operators = [">","<","==","!=","<=",">=","*","/","-","+","%","**","+=","-=",'break','continue']
 
 def open_file(path):
     with open(path,"r") as file:
         content = file.readlines()
     file.close()
     return content
+
+def find_all_operators(content):
+    for index, line in enumerate(content):
+        for  opt in all_operators:
+            if opt in line:
+                print(opt)
+                start, stop = [(m.start(0), m.end(0)) for m in re.finditer(re.escape(opt), line)][0]
+                print(start,stop)
+                print(line[start:stop])
+                line = line[:start] + '-'+ line[stop:]
+                print(line)
+                # l = list(line)
+                # print(l)
+                # print(l.index(opt))
+                # print(line)
 
 def mut_compare_operator(content):
     new_content = list()
@@ -104,7 +120,7 @@ def save_mut_code(content,folder,filename):
         for line in content:
             file.write(line)
 
-#Compare operator mutation
+#Compare operator mut
 # folder = "compare_operator_example"
 # filename = "compare_operator_example.py"
 # path = os.path.join("examples_to_mutation","compare_operator_example.py")
@@ -115,7 +131,7 @@ def save_mut_code(content,folder,filename):
 
 "-----------------------------------------------------"
 
-#Arithemtic operator mutation
+#Arithemtic operator mut
 # folder = "arithmetic_operator_example"
 # filename = "arithmetic_operator_example.py"
 # path = os.path.join("examples_to_mutation","arithmetic_operator_example.py")
@@ -125,7 +141,7 @@ def save_mut_code(content,folder,filename):
 # print(numbers_of_line)
 
 "------------------------------------------------------------"
-#Flow operator mutation
+#Flow operator mut
 # folder = "flow_operator_example"
 # filename = "flow_operator_example.py"
 # path = os.path.join("examples_to_mutation","flow_operator_example.py")
@@ -134,12 +150,17 @@ def save_mut_code(content,folder,filename):
 # save_mut_code(new_code,folder,filename)
 # print(numbers_of_line)
 
-#Constant mutation
-folder = "constant_variable_example"
-filename = "constant_variable_example.py"
-path = os.path.join("examples_to_mutation","constant_variable_example.py")
-content = open_file(path)
-new_code,numbers_of_line = mut_constant_variable(content)
-save_mut_code(new_code,folder,filename)
-print(numbers_of_line)
+#Constant mut
+# folder = "constant_variable_example"
+# filename = "constant_variable_example.py"
+# path = os.path.join("examples_to_mutation","constant_variable_example.py")
+# content = open_file(path)
+# new_code,numbers_of_line = mut_constant_variable(content)
+# save_mut_code(new_code,folder,filename)
+# print(numbers_of_line)
 
+folder = "arithmetic_operator_example"
+filename = "arithmetic_operator_example.py"
+path = os.path.join("examples_to_mutation","arithmetic_operator_example.py")
+content = open_file(path)
+find_all_operators(content)
