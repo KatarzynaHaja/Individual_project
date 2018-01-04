@@ -1,4 +1,4 @@
-from codegen.arithgen import IntegerGen, gen_max_int_gen
+from pyfuzz_master.codegen.arithgen import IntegerGen, gen_max_int_gen
 
 pgen_opts = {
     "module": {"children": [(1.0, "arith_integer"), (0.0, "arith_float")],
@@ -13,6 +13,7 @@ pgen_opts = {
     (2.0, "loop_integer"),
     (1.0, "change_global"),
     (1.0, "integer_closure"),
+    (1.0, "tail_recursion"),
     (1.0, "classes"),
     ],
         "max_children": 5,
@@ -37,11 +38,11 @@ pgen_opts = {
 
 }
 
-from pygen.cgen import Assignment, CallStatement, ForLoop, Module
+from pyfuzz_master.pygen.cgen import Assignment, CallStatement, ForLoop, Module
 
-from utils import eval_branches
+from pyfuzz_master.utils import eval_branches
 
-from codegen.integergen import ArithIntegerGenerator
+from pyfuzz_master.codegen.integergen import ArithIntegerGenerator
 
 
 class ProgGenerator(object):

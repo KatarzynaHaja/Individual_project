@@ -1,7 +1,7 @@
-from pygen.cgen import Assignment, CallStatement, IfStatement, ForLoop
+from pyfuzz_master.pygen.cgen import Assignment, CallStatement, IfStatement, ForLoop
 from .arithgen import ArithGen, gen_max_int_gen
 
-from utils import eval_branches, FunctionGenerator
+from pyfuzz_master.utils import eval_branches, FunctionGenerator
 
 
 import random

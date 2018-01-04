@@ -1,6 +1,6 @@
-from pygen.cgen import Assignment, CallStatement
+from pyfuzz_master.pygen.cgen import Assignment, CallStatement
 
-from utils import FunctionGenerator
+from pyfuzz_master.utils import FunctionGenerator
 
 
 class ChangeGlobalGenerator(FunctionGenerator):

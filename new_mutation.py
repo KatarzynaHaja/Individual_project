@@ -35,6 +35,7 @@ class Mutation:
                     else:
                         oper_occurs[opt] = 1
         maximum = max(oper_occurs, key=oper_occurs.get)
+        #print(dict_oper)
         return dict_oper, maximum
 
     def mut_char(self,opt):
@@ -51,8 +52,9 @@ class Mutation:
                     self.save_mut_code(content,"mut","foo.py",index_to_save)
                     index_to_save += 1
                 contents.append(content)
-                combination.append([original,opt[line]])
+                combination.append([original,opt[line],line])
             opt[line]= original
+        print(combination)
         return combination,contents
 
     def replace_char(self,text,start, end, replacement):
@@ -104,18 +106,18 @@ class Mutation:
 
 
 
-m = Mutation ('foo.py',False)
+m = Mutation ('kk/foo.py',False)
 opt , most_occurs = m.find_all_operators()
 mut, contentes =m.mut_char(opt)
 prob = m.count_propability(mut,most_occurs)
 index = m.choose_mutation(prob)
 name = m.save_mut_code(contentes[index],"mut","foo.py",index)
 
-d = Mutation(name,True)
-opt , most_occurs = d.find_all_operators()
-mut, contentes =d.mut_char(opt)
-prob = d.count_propability(mut,most_occurs)
-index = d.choose_mutation(prob)
+# d = Mutation(name,True)
+# opt , most_occurs = d.find_all_operators()
+# mut, contentes =d.mut_char(opt)
+# prob = d.count_propability(mut,most_occurs)
+# index = d.choose_mutation(prob)
 
 
 

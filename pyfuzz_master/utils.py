@@ -1,4 +1,4 @@
-from pygen.cgen import *
+from pyfuzz_master.pygen.cgen import *
 
 
 def eval_branches(rng, branches):

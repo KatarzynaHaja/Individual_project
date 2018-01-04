@@ -1,9 +1,9 @@
-from pygen.cgen import Assignment, CallStatement, IfStatement
+from pyfuzz_master.pygen.cgen import Assignment, CallStatement, IfStatement
 from .arithgen import ArithGen
 
-from utils import eval_branches, FunctionGenerator
+from pyfuzz_master.utils import eval_branches, FunctionGenerator
 
-import pgen
+import pyfuzz_master.pgen
 
 
 class TailRecursionGenerator(FunctionGenerator):
@@ -54,7 +54,7 @@ class TailRecursionGenerator(FunctionGenerator):
         func = self.create_function(["acc", "rest"])
 
         # generate an arith_integer function
-        gen = pgen.ArithIntegerGenerator(
+        gen = pyfuzz_master.pgen.ArithIntegerGenerator(
             self.module,
             self.stats,
             self.opts,

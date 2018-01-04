@@ -1,8 +1,8 @@
-from pygen.cgen import Assignment, CallStatement
+from pyfuzz_master.pygen.cgen import Assignment, CallStatement
 from .arithgen import ArithGen, IntegerGen, gen_max_int_gen
-from utils import eval_branches, FunctionGenerator
+from pyfuzz_master.utils import eval_branches, FunctionGenerator
 
-import pgen
+import pyfuzz_master.pgen
 
 
 class IterableGenerator(object):
@@ -71,7 +71,7 @@ class YieldFunctionGenerator(FunctionGenerator):
 
     def generate_child(self, func, literals):
         """Insert a function call to calculate some numbers."""
-        gen = pgen.ArithIntegerGenerator(
+        gen = pyfuzz_master.pgen.ArithIntegerGenerator(
             self.module,
             self.stats,
             self.opts,

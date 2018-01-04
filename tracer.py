@@ -19,7 +19,7 @@ class Tracker:
             for name, obj in inspect.getmembers(sys.modules[self.module]):
                 if inspect.isclass(obj):
                    self.classes.append(name)
-            print(self.classes)
+
 
     def traceit(self,frame, event, arg):
         lineno = frame.f_lineno
