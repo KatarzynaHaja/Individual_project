@@ -13,13 +13,14 @@ from __future__ import print_function
 import re
 import importlib
 import os
+import imp
 
 import random
 
 from pyfuzz_master.pgen import pgen_opts, ProgGenerator
 from pyfuzz_master.pygen.cgen import CodeGenerator
-from codes.neww import *
-from result_code import result
+import codes.neww
+import result_code
 import time
 def find_str(s, char):
     index = 0
@@ -48,51 +49,48 @@ def parse_code(f,seed = 43):
     called = g[position[1]:len(g)]
     m = called.split("\n")
     main = []
-    main.append("from " + re.sub(".py", "", package + "." + file) + " import *")
+    main.append("from " + re.sub(".py", "", package + "." + file) + " import *\n")
     for i in m:
         if i != "":
             if "for" not in i:
                 main.append(re.sub(" ", "", i))
     return code, main
 
-def create_unittest(code):
+def create_unittest(code,r):
     content = []
     content.append('import unittest \n')
     content.append(code[0]+ '\n')
     content.append('class MyTest(unittest.TestCase): \n')
-    print(len(code))
-    print("kod",code)
     for i in range(1,len(code)):
-        print(code[i])
         content.append('    def test'+ str(i) + '(self):\n')
-        content.append('        self.assertEqual(' + code[i] + ',' + str(eval(code[i]))+')\n')
+        content.append('        self.assertEqual(' + code[i] + ',' + str(r[i-1])+')\n')
     return content
 
 
 def generate_code(f,u,seed =43):
     code, main = parse_code(f,seed)
-    print(main)
-    with open(f,'w') as file:
-        file.write(code)
-        file.close()
-
-
+    file = open(f,'w')
+    file.write(code)
+    file.flush()
+    os.fsync(file)
     m = []
     m.append(main[0] + '\n')
     m.append('def result():\n')
     m.append('    z=[]\n')
     for i in main[1:]:
-        m.append('    x =' + i + '\n')
-        m.append('    z.append(x)\n')
+        m.append('    z.append('+i+')\n')
     m.append("    return z")
 
+    file1 = open("result_code.py", "w")
+    file1.writelines(m)
+    file1.flush()
+    os.fsync(file1)
+    imp.reload(codes.neww)
+    imp.reload(result_code)
 
-    with open("result_code.py", 'w') as file:
-        file.writelines(m)
-        file.close()
+    r = result_code.result()
 
-
-    d = create_unittest(main)
+    d = create_unittest(main,r)
     with open(u,'w') as file:
         file.writelines(d)
         file.close()
