@@ -17,21 +17,21 @@ class Run:
         for name, obj in inspect.getmembers(sys.modules[self.module]):
             if inspect.isclass(obj):
                 self.classes.append(name)
-        print(self.classes)
+        self.clas = self.classes[0]
 
     def run(self):
         loader = unittest.TestLoader()
         suite_list = list()
-        for i in range(len(self.classes)):
-            mod = getattr(self.mod, self.classes[i])
-            suite = unittest.TestSuite((
-                loader.loadTestsFromTestCase(mod)
-            ))
-            suite_list.append(suite)
+
+        mod = getattr(self.mod, self.clas)
+        suite = unittest.TestSuite((
+            loader.loadTestsFromTestCase(mod)
+        ))
+        suite_list.append(suite)
 
         runner = unittest.TextTestRunner(verbosity=2)
         for i in suite:
             t = runner.run(i)
 
-r = Run("tests.py","test_package")
+r = Run("unit.py","test_package")
 r.run()

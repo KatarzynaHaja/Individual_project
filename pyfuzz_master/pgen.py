@@ -1,4 +1,5 @@
 from pyfuzz_master.codegen.arithgen import IntegerGen, gen_max_int_gen
+import random
 
 pgen_opts = {
     "module": {"children": [(1.0, "arith_integer"), (0.0, "arith_float")],
@@ -19,11 +20,11 @@ pgen_opts = {
         "max_children": 5,
         "numbers": [gen_max_int_gen(), IntegerGen(-1000, 1000)],
         "type": [(1.0, "thin"), (1.0, "fat")],
-        "if": 0.5,
+        "if": 0.2,
     },
     "loop_integer": {
     "numbers": [IntegerGen(-10, 10)],
-    "if": 0.5,
+    "if": 0.2,
     },
     "change_global": {
     "numbers": [IntegerGen(-10, 10)],
@@ -63,51 +64,46 @@ class ProgGenerator(object):
         self.func_number = 1
         self.arg_number = 1
         lopts = self.opts["module"]
-
         self.prog_size = lopts["prog_size"]
         self.module_size = lopts["module_size"] - self.prog_size
 
         while self.module_size > 0 or self.prog_size > 0:
             main = []
-
-            loop = ForLoop('i', ['range(%d)' % (lopts["mainloop"],)], main)
+            loop = ForLoop('i', ['range(1)'], main)
 
             if "children" in lopts:
                 branch = eval_branches(self.rng, lopts["children"])
                 if branch == "arith_integer":
-                    main.append(Assignment('x', '=', ['5']))
+                    #main.append(Assignment('x', '=', ['5']))
                     f = self.arith_integer(self.opts[branch], 2)
+                    x = random.randint(1,10)
+                    y = random.randint(1,10)
                     main.append(
-                        Assignment('x',
-                                   '=',
-                                   [CallStatement(f,
-                                                  ['x',
-                                                   'i'])]))
-                    main.append("print(x, end='')")
+                      CallStatement(f,[str(x),str(y)]))
+                    #main.append("print(x, end='')")
 
                     self.module.content.insert(0, f)
                 if branch == "arith_float":
                     main.append(Assignment('x', '=', ['5.0']))
                     main.append("print(x, end='')")
-
-            self.module.main_body.append("print('prog_size: %d')" %
-                                        (lopts["prog_size"] - self.prog_size,))
-            self.module.main_body.append(
-                "print('func_number: %d')" %
-                (self.func_number,))
-            self.module.main_body.append(
-                "print('arg_number: %d')" %
-                (self.arg_number,))
+            print(self.func_number)
+            #
+            # self.module.main_body.append("print('prog_size: %d')" %
+            #                             (lopts["prog_size"] - self.prog_size,))
+            # self.module.main_body.append(
+            #     "print('func_number: %d')" %
+            #     (self.func_number,))
+            # self.module.main_body.append(
+            #     "print('arg_number: %d')" %
+            #     (self.arg_number,))
             self.module.main_body.append(loop)
 
             created_size = lopts["prog_size"] - self.prog_size
             refill = min(created_size, self.module_size)
-
             self.module_size -= refill
             self.prog_size += refill
 
         self.module.content.insert(0, 'from __future__ import print_function')
-
         return self.module
 
     def arith_integer(self, opts, args_num, globals=[]):

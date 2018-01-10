@@ -45,5 +45,6 @@ class Tracker:
         r = Run(self.filename,self.package)
         sys.settrace(self.traceit)
         r.run()
+        sys.settrace(None)
         return self.result
 
