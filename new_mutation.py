@@ -6,15 +6,22 @@ import time
 import numpy as np
 
 class Mutation:
-    def __init__(self, path, mutant):
-        self.mutant = mutant
-        self.operator = ["*","-","+"]
+    def __init__(self, path):
+        self.operator = ["*","-","+","|","&","<",">","^"]
         self.path= path
         self.original_content = self.open_file()
-        self.matrix_of_mutation  = np.matrix([[0.9, 0.05, 0.05],
-                                             [0.1,0.8,0.1],
-                                             [0.2,0.1,0.7]])
+        self.matrix_of_mutation  = np.matrix([[0.7, 0.1, 0.1, 0.02, 0.02, 0.02,0.02,0.02],
+                                             [0.02,0.7,0.08,0.02, 0.02, 0.02, 0.02, 0.02],
+                                             [0.09,0.11,0.7, 0.02, 0.02, 0.02, 0.02, 0.02],
+                                             [0.02, 0.02, 0.02, 0.7, 0.18, 0.02, 0.02, 0.02],
+                                             [0.02, 0.01,0.01,0.2,0.7,0.02,0.02, 0.02],
+                                             [ 0.01, 0.01,0.01,0.01,0.1,0.7,0.24,0.01],
+                                             [0.01,0.01,0.01,0.01,0.02,0.23,0.7,0.1],
+                                             [0.15,0.03,0.02,0.02,0.02,0.02,0.02,0.07]])
 
+        self.operators_in_file = {}
+        self.combination = list()
+        self.maximum = 0
 
     def open_file(self):
         with open(self.path, "r") as file:
@@ -23,39 +30,40 @@ class Mutation:
         return content
 
     def find_all_operators(self):
-        dict_oper = {}
         oper_occurs = dict()
         for index, line in enumerate(self.original_content):
             for opt in self.operator:
                 if opt in line:
                     start, stop = [(m.start(0), m.end(0)) for m in re.finditer(re.escape(opt), line)][0]
-                    dict_oper[index,start, stop] = opt
+                    self.operators_in_file[index,start, stop] = opt
                     if opt in oper_occurs.keys():
                         oper_occurs[opt] +=1
                     else:
                         oper_occurs[opt] = 1
-        maximum = max(oper_occurs, key=oper_occurs.get)
-        #print(dict_oper)
-        return dict_oper, maximum
+        self.maximum = max(oper_occurs, key=oper_occurs.get)
 
-    def mut_char(self,opt):
-        combination = list()
-        contents = list()
-        index_to_save =0
-        for index, line in enumerate(opt):
-            original = opt[line]
-            for i in range(len(opt)-1):
-                content = copy.deepcopy(self.original_content)
-                opt[line] = self.change_operator(opt[line],i)
-                content[line[0]] = self.replace_char(content[line[0]],line[1],line[2],opt[line])
-                if self.mutant ==True:
-                    self.save_mut_code(content,"mut","foo.py",index_to_save)
-                    index_to_save += 1
-                contents.append(content)
-                combination.append([original,opt[line],line])
-            opt[line]= original
-        print(combination)
-        return combination,contents
+
+    def combination_of_mut(self):
+        for index, line in enumerate(self.operators_in_file):
+            original = self.operators_in_file[line]
+            for i in range(len(self.operator) - 1):
+                mut = self.change_operator(original, i)
+                self.combination.append([original, mut, line])
+
+    def save_mutate_code(self,folder, file):
+        content = copy.deepcopy(self.original_content)
+        self.choose_mutation()
+        content[self.chosen_oper_index[2][0]] = self.replace_char(content[self.chosen_oper_index[2][0]],self.chosen_oper_index[2][1],
+                                              self.chosen_oper_index[2][2],self.chosen_oper_index[1])
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
+        name = "M" + file
+        with open(os.path.join(folder, name), "w") as file:
+            for line in content:
+                file.write(line)
+        return os.path.join(folder,name)
+
 
     def replace_char(self,text,start, end, replacement):
         return '%s%s%s'%(text[:start],replacement,text[end:])
@@ -65,39 +73,25 @@ class Mutation:
         operators.remove(opt)
         return operators[index]
 
-    def save_mut_code(self,content, folder, filename, index):
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-        if self.mutant== True:
-            name = "O"+str(index)+ filename
-            print("bleee")
-        else:
-            name = "M" + str(index) + filename
-        with open(os.path.join(folder, name), "w") as file:
-            for line in content:
-                file.write(line)
-        return os.path.join(folder,name)
-
-    def count_propability(self,mutations,occur):
-        print("muttt",self.mutant)
+    def count_propability(self):
         p = list()
         matrix = self.matrix_of_mutation
-        print(matrix)
         propablity = list()
-        hightest = self.get_index([occur,occur])
-        if self.mutant == True:
-            matrix = np.transpose(matrix)
-            print("poo",matrix)
+        hightest = self.get_index([self.maximum,self.maximum])
+        # if self.mutant == True:
+        #     matrix = np.transpose(matrix)
+        #     print("poo",matrix)
         h = matrix[hightest[0], hightest[1]]
-        for i in mutations:
+        for i in self.combination:
             indexs = self.get_index(i)
             p.append(matrix[indexs[0],indexs[1]]/h)
         for i in p:
             propablity.append(i/sum(np.array(p)))
-        return np.array(propablity)
+        self.propablity = np.array(propablity)
+        #return np.array(propablity)
 
-    def choose_mutation(self,prob):
-        return random.choice(list(enumerate(prob)))[0]
+    def choose_mutation(self):
+        self.chosen_oper_index = self.combination[random.choice(list(enumerate(self.propablity)))[0]]
 
     def get_index(self,char):
         return [self.operator.index(char[0]),self.operator.index(char[1])]
@@ -106,12 +100,16 @@ class Mutation:
 
 
 
-m = Mutation ('kk/foo.py',False)
-opt , most_occurs = m.find_all_operators()
-mut, contentes =m.mut_char(opt)
-prob = m.count_propability(mut,most_occurs)
-index = m.choose_mutation(prob)
-name = m.save_mut_code(contentes[index],"mut","foo.py",index)
+# m = Mutation ('codes/neww.py')
+# m.find_all_operators()
+#
+# m.combination_of_mut()
+# m.count_propability()
+# m.choose_mutation()
+# m.save_mutate_code("mut","neww.py")
+# prob = m.count_propability(mut,most_occurs)
+# index = m.choose_mutation(prob)
+# m.save_mut_code(contentes[index],"mut","foo.py",index)
 
 # d = Mutation(name,True)
 # opt , most_occurs = d.find_all_operators()

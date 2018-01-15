@@ -40,9 +40,7 @@ pgen_opts = {
 }
 
 from pyfuzz_master.pygen.cgen import Assignment, CallStatement, ForLoop, Module
-
 from pyfuzz_master.utils import eval_branches
-
 from pyfuzz_master.codegen.integergen import ArithIntegerGenerator
 
 
