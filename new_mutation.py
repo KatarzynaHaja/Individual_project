@@ -62,7 +62,7 @@ class Mutation:
         with open(os.path.join(folder, name), "w") as file:
             for line in content:
                 file.write(line)
-        return os.path.join(folder,name)
+        return content
 
 
     def replace_char(self,text,start, end, replacement):

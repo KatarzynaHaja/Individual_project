@@ -84,7 +84,6 @@ class ProgGenerator(object):
                 if branch == "arith_float":
                     main.append(Assignment('x', '=', ['5.0']))
                     main.append("print(x, end='')")
-            print(self.func_number)
             #
             # self.module.main_body.append("print('prog_size: %d')" %
             #                             (lopts["prog_size"] - self.prog_size,))

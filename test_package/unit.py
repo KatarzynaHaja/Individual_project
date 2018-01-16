@@ -1,24 +1,17 @@
 import unittest 
 from codes.neww import *
-
 class MyTest(unittest.TestCase): 
+    def test0(self):
+        self.assertEqual(func1(1,5),-1)
     def test1(self):
-        self.assertEqual(func1(1,5),0)
+        self.assertEqual(func2(3,8),0)
     def test2(self):
-        self.assertEqual(func11(3,8),3163826106)
+        self.assertEqual(func12(6,2),-1)
     def test3(self):
-        self.assertEqual(func12(6,2),2113928959)
+        self.assertEqual(func24(8,10),0)
     def test4(self):
-        self.assertEqual(func13(8,10),1832)
+        self.assertEqual(func34(8,10),747478801)
     def test5(self):
-        self.assertEqual(func14(8,10),10)
+        self.assertEqual(func46(1,9),935499983)
     def test6(self):
-        self.assertEqual(func20(1,9),91079796)
-    def test7(self):
-        self.assertEqual(func31(7,10),-1170)
-    def test8(self):
-        self.assertEqual(func44(6,10),1356108288)
-    def test9(self):
-        self.assertEqual(func45(9,7),68191224)
-    def test10(self):
-        self.assertEqual(func55(7,3),-2096559865)
+        self.assertEqual(func49(7,10),0)
